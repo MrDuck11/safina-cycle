@@ -1,0 +1,13 @@
+{
+  "name": "safina-cycle-app",
+  "version": "1.0.0",
+  "description": "Personal cycle calendar and care app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "web-push": "^3.6.7"
+  }
+}

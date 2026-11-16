@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Сафины ❤️</title>
+
+    <!-- PWA Настройки -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Сафина ❤️">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#2EC4B6">
+
+    <style>
+        :root {
+            --bg-color: #EBF7F6;
+            --card-bg: #FFFFFF;
+            --primary: #2EC4B6;
+            --primary-light: #E6FFFA;
+            --primary-dark: #1E8E83;
+            --period-bg: #FFE3E3;
+            --period-text: #C53030;
+            --ovul-bg: #EBF8FF;
+            --ovul-text: #2B6CB0;
+            --pms-bg: #FAF5FF;
+            --pms-text: #6B46C1;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --shadow: 0 12px 30px rgba(46, 196, 182, 0.12);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 460px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .greeting {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .settings-btn {
+            background: var(--primary-light);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .settings-btn:hover {
+            transform: rotate(30deg);
+            background: #B2F5EA;
+        }
+
+        /* Status Card + Progress */
+        .status-card {
+            background: linear-gradient(135deg, #2EC4B6 0%, #1E8E83 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(46, 196, 182, 0.25);
+        }
+        .status-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+        .status-card h2 {
+            font-size: 1.3rem;
+        }
+        .cycle-badge {
+            background: rgba(255, 255, 255, 0.22);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-card p {
+            font-size: 0.92rem;
+            opacity: 0.95;
+            margin-bottom: 14px;
+        }
+        .progress-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #FFFFFF;
+            border-radius: 6px;
+            transition: width 0.4s ease;
+        }
+
+        /* Calendar Section */
+        .calendar-section {
+            background: #F8FCFC;
+            border: 1px solid #E2F1F0;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .month-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .nav-btns button {
+            background: white;
+            border: 1px solid #CBD5E0;
+            border-radius: 8px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-left: 4px;
+        }
+        .nav-btns button:hover {
+            background: var(--primary-light);
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+        .day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.88rem;
+            background: #FFFFFF;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+        .day:hover {
+            transform: scale(1.08);
+        }
+        .day.period {
+            background: var(--period-bg);
+            color: var(--period-text);
+            font-weight: 600;
+        }
+        .day.ovulation {
+            background: var(--ovul-bg);
+            color: var(--ovul-text);
+            font-weight: 600;
+        }
+        .day.pms {
+            background: var(--pms-bg);
+            color: var(--pms-text);
+        }
+        .day.today {
+            border-color: var(--primary);
+            font-weight: 700;
+        }
+        .day.selected {
+            box-shadow: 0 0 0 2px var(--text-main);
+            transform: scale(1.08);
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1px solid #E2E8F0;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Day Summary Card */
+        .day-summary {
+            background: #FFFFFF;
+            border: 1.5px solid #B2F5EA;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+        }
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .summary-date {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+        .summary-tag {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        .summary-text {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        /* Mood Tracker */
+        .mood-section {
+            margin-bottom: 18px;
+        }
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+        .mood-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .mood-btn {
+            flex: 1;
+            background: #F7FAFC;
+            border: 1.5px solid #EDF2F7;
+            border-radius: 14px;
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .mood-btn span {
+            display: block;
+            font-size: 1.3rem;
+            margin-bottom: 2px;
+        }
+        .mood-btn.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        /* Advice Card */
+        .advice-card {
+            background: #F0F9F8;
+            border-left: 4px solid var(--primary);
+            padding: 14px 16px;
+            border-radius: 0 14px 14px 0;
+            margin-bottom: 18px;
+        }
+        .advice-card h3 {
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        .advice-card p {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.45;
+        }
+
+        /* Care Buttons */
+        .care-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .care-btn {
+            background: var(--primary-light);
+            border: 1px solid #B2F5EA;
+            color: var(--primary-dark);
+            padding: 10px 12px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .care-btn:hover, .care-btn:active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Setup / Settings Overlay */
+        .setup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(235, 247, 246, 0.96);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .setup-card {
+            background: white;
+            padding: 28px 24px;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow);
+        }
+        .setup-card h2 {
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            font-size: 1.35rem;
+        }
+        .setup-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #CBD5E0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+        .save-btn {
+            background: linear-gradient(135deg, #2EC4B6 0%, #1E8E83 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            box-shadow: 0 6px 15px rgba(46, 196, 182, 0.25);
+        }
+        .cancel-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <div class="greeting" id="greetingText">Привет, солнышко! ❤️</div>
+            <button class="settings-btn" onclick="openSettings()" title="Настроить цикл">⚙️</button>
+        </header>
+
+        <div class="status-card">
+            <div class="status-top">
+                <h2 id="phaseTitle">Загрузка...</h2>
+                <span class="cycle-badge" id="cycleDayBadge">День 1</span>
+            </div>
+            <p id="phaseDesc">Рассчитываем твой цикл...</p>
+            <div class="progress-bg">
+                <div class="progress-fill" id="cycleProgress" style="width: 10%;"></div>
+            </div>
+        </div>
+
+        <!-- Интерактивный календарь -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <div class="month-title" id="monthTitle">Ноябрь 2026</div>
+                <div class="nav-btns">
+                    <button onclick="changeMonth(-1)">←</button>
+                    <button onclick="changeMonth(1)">→</button>
+                </div>
+            </div>
+            <div class="weekdays">
+                <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+            </div>
+            <div class="days-grid" id="daysGrid"></div>
+
+            <div class="legend">
+                <div class="legend-item"><span class="dot" style="background: #FEB2B2;"></span>Месячные</div>
+                <div class="legend-item"><span class="dot" style="background: #90CDF4;"></span>Овуляция</div>
+                <div class="legend-item"><span class="dot" style="background: #D6BCFA;"></span>ПМС</div>
+            </div>
+        </div>
+
+        <!-- Сводка выбранного дня -->
+        <div class="day-summary" id="daySummary">
+            <div class="summary-header">
+                <span class="summary-date" id="summaryDate">Сегодня</span>
+                <span class="summary-tag" id="summaryTag">День цикла</span>
+            </div>
+            <p class="summary-text" id="summaryText">Нажми на любой день в календаре, чтобы увидеть прогноз.</p>
+        </div>
+
+        <!-- Трекер самочувствия -->
+        <div class="mood-section">
+            <div class="section-title">Как ты себя чувствуешь сегодня?</div>
+            <div class="mood-row">
+                <div class="mood-btn" onclick="updateMood(this, 'Отлично ✨')"><span>🥰</span>Супер</div>
+                <div class="mood-btn" onclick="updateMood(this, 'Спокойно 🌿')"><span>😌</span>Норм</div>
+                <div class="mood-btn" onclick="updateMood(this, 'Устала 😴')"><span>😴</span>Устала</div>
+                <div class="mood-btn" onclick="updateMood(this, 'Тянет живот 🍫')"><span>🥺</span>Болит</div>
+            </div>
+        </div>
+
+        <!-- Советы по фазе -->
+        <div class="advice-card">
+            <h3 id="adviceTitle">🌿 Забота о себе</h3>
+            <p id="adviceText">Загружаем персональные рекомендации...</p>
+        </div>
+
+        <!-- Кнопки вызова -->
+        <div class="care-section">
+            <div class="section-title">Позвать любовь ❤️</div>
+            <div class="care-buttons">
+                <button class="care-btn" onclick="sendSignal('Хочу на ручки 🤗')">Хочу на ручки 🤗</button>
+                <button class="care-btn" onclick="sendSignal('Болит живот 😢')">Болит живот 😢</button>
+                <button class="care-btn" onclick="sendSignal('Нужен шоколад 🍫')">Нужен шоколад 🍫</button>
+                <button class="care-btn" onclick="sendSignal('Мне грустно 🥺')">Мне грустно 🥺</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран настройки -->
+    <div class="setup-overlay" id="setupOverlay">
+        <div class="setup-card">
+            <h2 id="setupTitle">Привет, милая! ❤️</h2>
+            <p id="setupSubtitle">Настрой свой персональный календарь один раз — и он сам всё рассчитает, подскажет и напомнит о важном.</p>
+            
+            <div class="form-group">
+                <label>Когда начались последние месячные?</label>
+                <input type="date" id="lastPeriodInput">
+            </div>
+            <div class="form-group">
+                <label>Сколько дней обычно длится весь цикл?</label>
+                <input type="number" id="cycleLengthInput" min="20" max="45" value="28">
+            </div>
+            <div class="form-group">
+                <label>Сколько дней обычно идут месячные?</label>
+                <input type="number" id="periodLengthInput" min="2" max="10" value="5">
+            </div>
+            
+            <button class="save-btn" onclick="saveSettings()">Сохранить и открыть календарь</button>
+            <button class="cancel-btn" id="cancelSetupBtn" onclick="closeSettings()" style="display: none;">Отмена</button>
+        </div>
+    </div>
+
+    <script>
+        const greetings = [
+            "Привет, солнышко! ❤️",
+            "Милая, доброе утро! Береги себя.",
+            "Котик, как ты себя чувствуешь?",
+            "Золото мое, отличного дня!",
+            "Лапуля, ты моя радость. ❤️",
+            "Сафина, улыбнись! Я рядом."
+        ];
+
+        const monthsNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+        const monthsGenitive = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+
+        let viewDate = new Date();
+        let selectedDate = new Date();
+
+        let settings = {
+            isConfigured: localStorage.getItem('isConfigured') === 'true',
+            lastPeriod: localStorage.getItem('lastPeriod') || new Date().toISOString().split('T')[0],
+            cycleLength: parseInt(localStorage.getItem('cycleLength')) || 28,
+            periodLength: parseInt(localStorage.getItem('periodLength')) || 5
+        };
+
+        async function initApp() {
+            document.getElementById('greetingText').innerText = greetings[Math.floor(Math.random() * greetings.length)];
+
+            // Пробуем подтянуть свежие данные с сервера, если он доступен
+            try {
+                const res = await fetch('/api/data');
+                if (res.ok) {
+                    const data = await res.json();
+                    settings.lastPeriod = data.lastPeriod;
+                    settings.cycleLength = data.cycleLength;
+                    settings.periodLength = data.periodLength;
+                }
+            } catch (e) {
+                console.log("Работаем в автономном режиме");
+            }
+
+            document.getElementById('lastPeriodInput').value = settings.lastPeriod;
+            document.getElementById('cycleLengthInput').value = settings.cycleLength;
+            document.getElementById('periodLengthInput').value = settings.periodLength;
+
+            if (!settings.isConfigured) {
+                document.getElementById('setupOverlay').style.display = 'flex';
+                document.getElementById('cancelSetupBtn').style.display = 'none';
+            }
+
+            updateTodayStatus();
+            renderCalendar();
+            showDayDetails(new Date());
+        }
+
+        function openSettings() {
+            document.getElementById('setupTitle').innerText = "Настройки цикла ⚙️";
+            document.getElementById('setupSubtitle').innerText = "Если цикл сдвинулся или изменился, просто обнови данные ниже — календарь перестроится.";
+            document.getElementById('cancelSetupBtn').style.display = 'block';
+            document.getElementById('setupOverlay').style.display = 'flex';
+        }
+
+        function closeSettings() {
+            document.getElementById('setupOverlay').style.display = 'none';
+        }
+
+        async function saveSettings() {
+            const dateVal = document.getElementById('lastPeriodInput').value;
+            if (!dateVal) return alert("Выбери дату начала последних месячных ❤️");
+
+            settings.lastPeriod = dateVal;
+            settings.cycleLength = parseInt(document.getElementById('cycleLengthInput').value) || 28;
+            settings.periodLength = parseInt(document.getElementById('periodLengthInput').value) || 5;
+            settings.isConfigured = true;
+
+            localStorage.setItem('lastPeriod', settings.lastPeriod);
+            localStorage.setItem('cycleLength', settings.cycleLength);
+            localStorage.setItem('periodLength', settings.periodLength);
+            localStorage.setItem('isConfigured', 'true');
+
+            // Отправляем на сервер
+            try {
+                await fetch('/api/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lastPeriod: settings.lastPeriod,
+                        cycleLength: settings.cycleLength,
+                        periodLength: settings.periodLength
+                    })
+                });
+            } catch (e) { console.log("Не удалось отправить на сервер"); }
+
+            closeSettings();
+            updateTodayStatus();
+            renderCalendar();
+            showDayDetails(selectedDate);
+        }
+
+        async function updateMood(btn, moodLabel) {
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            try {
+                await fetch('/api/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mood: moodLabel })
+                });
+            } catch (e) { console.log("Ошибка отправки настроения"); }
+        }
+
+        async function sendSignal(message) {
+            try {
+                await fetch('/api/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ signal: message })
+                });
+                alert(`Сигнал успешно отправлен Руслану: "${message}" ❤️`);
+            } catch (e) {
+                alert(`Сигнал: "${message}" (Сервер локально не отвечает, но в сборке всё готово!)`);
+            }
+        }
+
+        function getCycleInfoForDate(targetDate) {
+            const start = new Date(settings.lastPeriod);
+            start.setHours(0, 0, 0, 0);
+            const target = new Date(targetDate);
+            target.setHours(0, 0, 0, 0);
+
+            const diffTime = target - start;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const cycleDay = ((diffDays % settings.cycleLength) + settings.cycleLength) % settings.cycleLength + 1;
+            const ovulationDay = settings.cycleLength - 14;
+
+            if (cycleDay <= settings.periodLength) {
+                return {
+                    cycleDay,
+                    type: 'period',
+                    phaseName: 'Менструальная фаза',
+                    shortDesc: 'Дни менструации. Важно беречь себя, держать ноги в тепле и больше отдыхать.',
+                    adviceTitle: '🍓 Забота во время месячных',
+                    adviceText: 'Пей теплый травяной чай, добавь в рацион гречку, говядину или гранат (источники железа) и не перегружай себя.'
+                };
+            } else if (cycleDay < ovulationDay - 1) {
+                return {
+                    cycleDay,
+                    type: 'follicular',
+                    phaseName: 'Фолликулярная фаза',
+                    shortDesc: 'Энергия растет! Отличное самочувствие, легкость и прилив сил.',
+                    adviceTitle: '🌿 Энергия и легкость',
+                    adviceText: 'Прекрасное время для прогулок, свежих салатов, легких блюд и новых планов.'
+                };
+            } else if (cycleDay >= ovulationDay - 1 && cycleDay <= ovulationDay + 1) {
+                return {
+                    cycleDay,
+                    type: 'ovulation',
+                    phaseName: 'Овуляция ✨',
+                    shortDesc: 'Пик энергии, обаяния и настроения! Высокая фертильность.',
+                    adviceTitle: '🦋 Пик активности',
+                    adviceText: 'Ты сегодня просто сияешь! Добавь в питание авокадо, орехи и витамин Е.'
+                };
+            } else if (cycleDay >= settings.cycleLength - 5) {
+                return {
+                    cycleDay,
+                    type: 'pms',
+                    phaseName: 'Лютеиновая фаза (ПМС)',
+                    shortDesc: 'Возможна чувствительность, усталость или тяга к сладкому. Я рядом ❤️',
+                    adviceTitle: '🕯️ Время замедлиться',
+                    adviceText: 'Постарайся выспаться, ешь меньше соленого (чтобы не было отеков) и добавь магний (бананы, горький шоколад).'
+                };
+            } else {
+                return {
+                    cycleDay,
+                    type: 'luteal',
+                    phaseName: 'Лютеиновая фаза',
+                    shortDesc: 'Спокойный, ровный период цикла. Хорошее время для привычных дел.',
+                    adviceTitle: '🍵 Баланс и уют',
+                    adviceText: 'Поддерживай водный баланс, выбирай сложные углеводы и уютные вечера.'
+                };
+            }
+        }
+
+        function updateTodayStatus() {
+            const info = getCycleInfoForDate(new Date());
+            document.getElementById('phaseTitle').innerText = info.phaseName;
+            document.getElementById('cycleDayBadge').innerText = `День ${info.cycleDay} из ${settings.cycleLength}`;
+            document.getElementById('phaseDesc').innerText = info.shortDesc;
+            document.getElementById('adviceTitle').innerText = info.adviceTitle;
+            document.getElementById('adviceText').innerText = info.adviceText;
+
+            const percent = Math.min(100, Math.round((info.cycleDay / settings.cycleLength) * 100));
+            document.getElementById('cycleProgress').style.width = `${percent}%`;
+        }
+
+        function changeMonth(step) {
+            viewDate.setMonth(viewDate.getMonth() + step);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('daysGrid');
+            grid.innerHTML = '';
+
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            document.getElementById('monthTitle').innerText = `${monthsNames[month]} ${year}`;
+
+            const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const cellDate = new Date(year, month, day);
+                const info = getCycleInfoForDate(cellDate);
+
+                const dayDiv = document.createElement('div');
+                dayDiv.classList.add('day');
+                dayDiv.innerText = day;
+
+                if (info.type === 'period') dayDiv.classList.add('period');
+                if (info.type === 'ovulation') dayDiv.classList.add('ovulation');
+                if (info.type === 'pms') dayDiv.classList.add('pms');
+
+                if (cellDate.toDateString() === today.toDateString()) {
+                    dayDiv.classList.add('today');
+                }
+                if (cellDate.toDateString() === selectedDate.toDateString()) {
+                    dayDiv.classList.add('selected');
+                }
+
+                dayDiv.onclick = () => {
+                    selectedDate = cellDate;
+                    renderCalendar();
+                    showDayDetails(cellDate);
+                };
+
+                grid.appendChild(dayDiv);
+            }
+        }
+
+        function showDayDetails(dateObj) {
+            const info = getCycleInfoForDate(dateObj);
+            const today = new Date();
+            const isToday = dateObj.toDateString() === today.toDateString();
+
+            const dateStr = isToday 
+                ? `Сегодня, ${dateObj.getDate()} ${monthsGenitive[dateObj.getMonth()]*''}`
+                : `${dateObj.getDate()} ${monthsGenitive[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+
+            document.getElementById('summaryDate').innerText = dateStr;
+            document.getElementById('summaryTag').innerText = `${info.cycleDay}-й день • ${info.phaseName}`;
+            document.getElementById('summaryText').innerText = info.shortDesc;
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
