@@ -588,6 +588,22 @@
             updateTodayStatus();
             renderCalendar();
             showDayDetails(new Date());
+
+            // Автоматическая проверка состояния пуш-подписки для панели наблюдателя
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                navigator.serviceWorker.ready.then(function(registration) {
+                    return registration.pushManager.getSubscription();
+                }).then(function(subscription) {
+                    const pushBtn = document.getElementById('push-toggle-btn');
+                    if (subscription && pushBtn) {
+                        pushBtn.textContent = '🔔 Уведомления активны';
+                        pushBtn.disabled = true;
+                        pushBtn.style.backgroundColor = '#4CAF50';
+                    }
+                }).catch(function(err) {
+                    console.log('Ошибка при проверке пуш-подписки:', err);
+                });
+            }
         }
 
         function openSettings() {
