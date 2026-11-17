@@ -121,7 +121,7 @@ app.get('/ruslan', (req, res) => {
                 .panel-container { width: 100%; max-width: 440px; background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
                 h2 { color: var(--primary-dark); margin-bottom: 6px; font-size: 1.3rem; }
                 .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
-                .push-btn { background: var(--primary); color: white; border: none; padding: 10px 14px; border-radius: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-bottom: 18px; }
+                .push-btn { background: var(--primary); color: white; border: none; padding: 10px 14px; border-radius: 12px; width: 100%; font-weight: 600; cursor: pointer; margin-bottom: 18px; transition: background 0.2s; }
                 .block { background: #F8FCFC; border: 1px solid #E2F1F0; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
                 .block-title { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
                 .block-value { font-size: 1.05rem; font-weight: 700; color: var(--primary-dark); }
@@ -199,8 +199,26 @@ app.get('/ruslan', (req, res) => {
                         body: JSON.stringify({ role: 'ruslan', subscription: sub })
                     });
 
-                    document.getElementById('pushBtn').innerText = '✅ Уведомления включены!';
-                    document.getElementById('pushBtn').style.background = '#20998E';
+                    const btn = document.getElementById('pushBtn');
+                    btn.innerText = '✅ Уведомления включены!';
+                    btn.style.background = '#20998E';
+                }
+
+                // Автоматическая проверка существующей подписки при загрузке страницы
+                async function checkExistingSubscription() {
+                    if ('serviceWorker' in navigator) {
+                        try {
+                            const reg = await navigator.serviceWorker.ready;
+                            const sub = await reg.pushManager.getSubscription();
+                            if (sub) {
+                                const btn = document.getElementById('pushBtn');
+                                btn.innerText = '✅ Уведомления включены!';
+                                btn.style.background = '#20998E';
+                            }
+                        } catch (e) {
+                            console.log('Не удалось проверить статус подписки', e);
+                        }
+                    }
                 }
 
                 function calculateCycleStats(lastPeriodStr, cycleLength, periodLength) {
@@ -266,6 +284,7 @@ app.get('/ruslan', (req, res) => {
                     } catch (e) {}
                 }
 
+                checkExistingSubscription();
                 fetchStatus();
                 setInterval(fetchStatus, 3000);
             </script>
